@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart'; 
 import 'package:alp_ml/viewmodel/calculator_viewmodel.dart';
 import 'package:alp_ml/model/user_input.dart';
 
@@ -37,8 +38,9 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("Simplified", style: TextStyle(color: Colors.grey, fontSize: 16)),
-              Text("Obesity Check", style: TextStyle(color: primaryColor, fontSize: 32, fontWeight: FontWeight.bold)),
+              // --- HEADER (Fixed branding) ---
+              Text("HealthBuddy", style: TextStyle(color: primaryColor, fontSize: 32, fontWeight: FontWeight.bold)),
+              Text("Obesity Check", style: TextStyle(color: Colors.grey, fontSize: 16)),
               SizedBox(height: 30),
 
               // GENDER
@@ -114,7 +116,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                     elevation: 5,
                   ),
                   onPressed: () {
-                    // Create Simplified Input
+                    // Create Input
                     UserInput input = UserInput(
                       gender: _gender,
                       age: double.tryParse(_ageController.text) ?? 25,
@@ -210,7 +212,6 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
               ),
 
               // AI Prediction Result
-              
               SizedBox(height: 10),
               Text(
                 vm.result,
@@ -221,7 +222,6 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                   color: vm.resultColor
                 ),
               ),
-              
               SizedBox(height: 30),
 
               // BMI Info Card
@@ -243,7 +243,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                       ],
                     ),
                     Text(
-                      bmi.toStringAsFixed(1), // Display e.g., "24.5"
+                      bmi.toStringAsFixed(1), 
                       style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold, color: Color(0xFF2D3142)),
                     ),
                   ],
@@ -280,6 +280,24 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
               ),
 
               Spacer(),
+
+              // NEW BUTTON: View Tips 
+              SizedBox(
+                width: double.infinity,
+                height: 55,
+                child: OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(color: primaryColor),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context); // Close modal
+                    context.go('/tips'); // Navigate to Tips tab
+                  },
+                  child: Text("VIEW HEALTH LIBRARY", style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold)),
+                ),
+              ),
+              SizedBox(height: 10),
 
               // Close Button
               SizedBox(

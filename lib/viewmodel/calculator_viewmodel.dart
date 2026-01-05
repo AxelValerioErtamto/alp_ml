@@ -1,6 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:alp_ml/model/user_input.dart';
-import 'package:alp_ml/utils/classifier.dart'; 
+import 'package:alp_ml/utils/classifier.dart'; // ✅ UNCOMMENTED THIS so your AI works
+
+// 1. History Model
+class HistoryItem {
+  final DateTime date;
+  final String result;
+  final double bmi;
+  final Color color;
+
+  HistoryItem({required this.date, required this.result, required this.bmi, required this.color});
+}
 
 class CalculatorViewModel extends ChangeNotifier {
   String _result = "Enter details";
@@ -8,6 +18,10 @@ class CalculatorViewModel extends ChangeNotifier {
 
   String get result => _result;
   Color get resultColor => _resultColor;
+
+  // --- HISTORY STATE ---
+  List<HistoryItem> _history = [];
+  List<HistoryItem> get history => _history;
 
   final List<double> mean = [
     0.5065165876777251,  // Gender
@@ -39,7 +53,7 @@ class CalculatorViewModel extends ChangeNotifier {
       scaledData.add(val);
     }
 
-    // Predict
+    // Predict - ✅ Uses the real function from classifier.dart
     List<double> probabilities = score(scaledData);
 
     // Find Winner
@@ -79,6 +93,24 @@ class CalculatorViewModel extends ChangeNotifier {
       _resultColor = Colors.green;
     }
 
+    // --- SAVE TO HISTORY ---
+    double calculatedBMI = 0;
+    if (input.height > 0) {
+      calculatedBMI = input.weight / (input.height * input.height);
+    }
+
+    _history.insert(0, HistoryItem(
+      date: DateTime.now(),
+      result: _result,
+      bmi: calculatedBMI,
+      color: _resultColor
+    ));
+
+    notifyListeners();
+  }
+
+  void clearHistory() {
+    _history.clear();
     notifyListeners();
   }
 }
