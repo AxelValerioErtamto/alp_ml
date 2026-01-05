@@ -109,6 +109,38 @@ class CalculatorViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Map<String, dynamic> predictOnly(UserInput input) {
+    List<double> rawData = input.toList();
+    List<double> scaledData = [];
+
+    for (int i = 0; i < rawData.length; i++) {
+      double val = (rawData[i] - mean[i]) / scale[i];
+      scaledData.add(val);
+    }
+
+    List<double> probabilities = score(scaledData);
+    int winnerIndex = 0;
+    double maxVal = -999.0;
+    for (int i = 0; i < probabilities.length; i++) {
+      if (probabilities[i] > maxVal) {
+        maxVal = probabilities[i];
+        winnerIndex = i;
+      }
+    }
+
+    List<String> labels = ["Insufficient Weight", "Normal Weight", "Obesity Type I", "Obesity Type II", "Obesity Type III", "Overweight Level I", "Overweight Level II"];
+    String label = labels[winnerIndex];
+    
+    Color color;
+    if (label == "Obesity Type III") color = Colors.red.shade900;
+    else if (label.contains("Obesity")) color = Colors.red;
+    else if (label.contains("Overweight")) color = Colors.orange;
+    else if (label.contains("Insufficient")) color = Colors.blue;
+    else color = Colors.green;
+
+    return {'label': label, 'color': color};
+  }
+
   void clearHistory() {
     _history.clear();
     notifyListeners();
